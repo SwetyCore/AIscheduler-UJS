@@ -109,6 +109,12 @@ function scheduleHtmlParser(html) {
                             infos.splice(j, 1);
 
                         }
+                        var rule1=/\d\d\d\d年\d\d月\d\d日/;
+                        if(rule1.test(infos[j]))
+                        {
+                            infos.splice(j, 1);
+                            infos.splice(j+1,1);
+                        }
                     }
                     console.log(infos);
 
@@ -141,7 +147,7 @@ function scheduleHtmlParser(html) {
                             //console.info(course);
                             result.push(course);
 
-                            if (infos[index + 4] != undefined) {
+                            if (infos[index + 4] != undefined&&infos[index+5]!=undefined) {
                                 index += 4;
                             } else {
                                 hasNext = false;
@@ -175,7 +181,7 @@ function scheduleHtmlParser(html) {
                             //console.info(course);
                             result.push(course);
 
-                            if (infos[index + 3] != undefined) {
+                            if (infos[index + 3] != undefined&&infos[index+4]!=undefined) {
                                 index += 3;
                             } else {
                                 hasNext = false;
