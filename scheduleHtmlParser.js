@@ -89,7 +89,7 @@ function getTime(text, start, span) {
 function scheduleHtmlParser(html) {
     var $ = cheerio.load(html, { decodeEntities: false });
     let result = [];
-
+    //debugger;
     $('#Table1').find('tbody').find('tr').each(function (row, _) {
         // 跳过前面两行
         if (row > 1) {
@@ -100,24 +100,27 @@ function scheduleHtmlParser(html) {
                 } else {
                     let infos = $(this).html().split('<br>');
                     infos = infos.filter(e => e.length != 0);
+
+                    let illegal=['选修','必修',"校选",'线上教学',"线上考试"]
                     // 无关去除
                     for (j = 0; j < infos.length; j++) {
-                        if (infos[j] == '必修') {
-                            infos.splice(j, 1);
-                        }
-                        if (infos[j] == "校选") {
-                            infos.splice(j, 1);
-
-                        }
                         var rule1=/\d\d\d\d年\d\d月\d\d日/;
-                        if(rule1.test(infos[j]))
+                        var rule2=/\d\d\d\d年\d\d月\d\d日(.*?)/
+                        if(rule2.test(infos[j])||rule1.test(infos[j]))
                         {
-                            infos.splice(j, 1);
+                            infos[j-1]=infos[j-1]+infos[j+1]
                             infos.splice(j+1,1);
+                            infos.splice(j, 1);
+                        }
+                        for(a=0;a<illegal.length;a++)
+                        {
+                            if (infos[j] == illegal[a]) {
+                                infos.splice(j, 1);
+                            }
                         }
                     }
-                    console.log(infos);
 
+                    console.log(infos);
                     let hasNext = true;
                     let index = 0;
                     if (infos.length > 3) {
@@ -147,7 +150,7 @@ function scheduleHtmlParser(html) {
                             //console.info(course);
                             result.push(course);
 
-                            if (infos[index + 4] != undefined&&infos[index+5]!=undefined) {
+                            if (infos[index + 4] != undefined) {
                                 index += 4;
                             } else {
                                 hasNext = false;
@@ -181,7 +184,7 @@ function scheduleHtmlParser(html) {
                             //console.info(course);
                             result.push(course);
 
-                            if (infos[index + 3] != undefined&&infos[index+4]!=undefined) {
+                            if (infos[index + 3] != undefined) {
                                 index += 3;
                             } else {
                                 hasNext = false;
